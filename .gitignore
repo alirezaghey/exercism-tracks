@@ -1,6 +1,9 @@
 javascript/*/node_modules
-
+javascript/*/.exercism
 
 python/*/__pycache__
 python/*/.pytest_cache
 python/*/.mypy_cache
+python/*/.exercism
+
+bash/*/.exercism
