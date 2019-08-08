@@ -4,4 +4,7 @@
 //
 
 export const isPangram = str =>
-  new Set([...str.toLowerCase().replace(/[^a-z]/g, '')]).size === 26;
+  new Set(str.toLowerCase().match(/[a-z]/g, '')).size === NUMOFALPHABET;
+// new Set(str.toLowerCase().replace(/[^a-z]/g, '')).size === NUMOFALPHABET;
+
+const NUMOFALPHABET = 26;
