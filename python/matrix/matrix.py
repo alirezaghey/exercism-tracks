@@ -22,12 +22,20 @@ class Matrix(object):
         """
         self._row: List[List[int]] = [
             [int(y) for y in x.split(" ")] for x in matrix_string.split("\n")]
-        self._column: List[List[int]] = []
-        for i in range(len(self._row[0])):
-            temp: List[int] = []
-            for j in range(len(self._row)):
-                temp.append(self._row[j][i])
-            self._column.append(temp)
+
+        # using zip and * operator to transpose
+        # self._column: List[List[int]] = [list(l) for l in zip(*self._row)]
+
+        # using list comprehensions to transpose
+        self._column: List[List[int]] = [[self._row[j][i] for j in range(
+            len(self._row))] for i in range(len(self._row[0]))]
+
+        # using plain old for loops to transpose
+        # for i in range(len(self._row[0])):
+        #     temp: List[int] = []
+        #     for j in range(len(self._row)):
+        #         temp.append(self._row[j][i])
+        #     self._column.append(temp)
 
     def row(self, index: int) -> List[int]:
         """
@@ -39,7 +47,7 @@ class Matrix(object):
         Returns:
             List[int]: A list of ints that represents the specified row
         """
-        return self._row[index-1]
+        return self._row[index-1].copy()
 
     def column(self, index: int) -> List[int]:
         """
@@ -51,4 +59,4 @@ class Matrix(object):
         Returns:
             List[int]: A list of ints that represents the specified column
         """
-        return self._column[index-1]
+        return self._column[index-1].copy()
