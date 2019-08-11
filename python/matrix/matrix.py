@@ -21,14 +21,14 @@ class Matrix(object):
             matrix_string str: A string matrix where rows are delimited with \n and columns with 
         """
         self._row: List[List[int]] = [
-            [int(y) for y in x.split(" ")] for x in matrix_string.split("\n")]
+            [int(y) for y in x.split()] for x in matrix_string.splitlines()]
 
         # using zip and * operator to transpose
-        # self._column: List[List[int]] = [list(l) for l in zip(*self._row)]
+        self._column: List[List[int]] = [list(l) for l in zip(*self._row)]
 
         # using list comprehensions to transpose
-        self._column: List[List[int]] = [[self._row[j][i] for j in range(
-            len(self._row))] for i in range(len(self._row[0]))]
+        # self._column: List[List[int]] = [[self._row[j][i] for j in range(
+        #     len(self._row))] for i in range(len(self._row[0]))]
 
         # using plain old for loops to transpose
         # for i in range(len(self._row[0])):
