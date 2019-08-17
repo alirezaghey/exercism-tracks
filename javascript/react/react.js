@@ -1,75 +1,60 @@
 class InputCell {
   constructor(val) {
     this.value = val;
-    this.ComputeCells = [];
+    this.dependents = [];
   }
+
   setValue(val) {
     if (this.value !== val) {
       this.value = val;
-      this.ComputeCells.forEach(computeCell => computeCell.notify());
+      this.dependents.forEach(cell => cell.notify());
     }
   }
 }
 
 class ComputeCell {
-  constructor(inputCells, computerFn) {
-    this.inputCells = inputCells;
-    this.computeCells = [];
-    this.inputCells.forEach(inputCell => {
-      if (inputCell instanceof InputCell) {
-        inputCell.ComputeCells.push(this);
-      } else if (inputCell instanceof ComputeCell) {
-        console.log('some really bad hello');
-        this.computeCells.push(inputCell);
-      }
-    });
-    this.computerFn = computerFn;
+  constructor(cells, fn) {
+    this.cells = cells;
+    this.fn = fn;
+    this.val = this.fn(this.cells);
     this.callBacks = [];
-    this.value = this.computerFn(this.inputCells);
+
+    cells.forEach(cell => {
+      cell.dependents.push(this);
+    });
+    this.dependents = [];
   }
-  changeValue() {
-    console.log('hello from temp value');
-    console.log(this.computerFn(this.inputCells));
-    const tempValue = this.computerFn(this.inputCells);
-    this.computeCells.forEach(cell => cell.notify());
-    if (
-      tempValue !== this.value
-      // tempValue.length !== this.value.length //||
-      // tempValue.some((v, i) => v !== this.value[i])
-    ) {
-      this.value = tempValue;
-      this.callBacks.forEach(callBack => callBack.notify(this));
-    }
-    return this.computerFn(this.inputCells);
+
+  get value() {
+    return this.val;
   }
-  addCallback(callBack) {
-    this.callBacks.push(callBack);
+
+  addCallback(callback) {
+    this.callBacks.push(callback);
   }
-  removeCallback(callBack) {
-    let found = -1;
-    for (let i = 0; i < this.callBacks.length; i++) {
-      if (this.callBacks[i] === callBack) {
-        found = i;
-        break;
-      }
-    }
-    if (found !== -1) this.callBacks.splice(found, 1);
+
+  removeCallback(callback) {
+    this.callBacks = this.callBacks.filter(el => el !== callback);
   }
+
   notify() {
-    // this.callBacks.forEach(callBack => {
-    //   callBack.notify(this);
-    this.changeValue();
-    // });
+    const tempVal = this.fn(this.cells);
+    if (this.val !== tempVal) {
+      this.val = tempVal;
+      this.dependents.forEach(cell => cell.notify());
+      this.callBacks.forEach(callback => callback.fire(this));
+    }
   }
 }
 
 class CallbackCell {
-  constructor(cb) {
-    this.cb = cb;
+  constructor(fn) {
+    this.fn = fn;
     this.values = [];
   }
-  notify(cell) {
-    this.values = [this.cb(cell)];
+
+  fire(cell) {
+    this.values.push(this.fn(cell));
   }
 }
 
