@@ -5,22 +5,28 @@
 //
 
 export const hey = message => {
-  if (/^[A-Z ]+\?$/.test(message)) return ANSWERS['calm'];
-  if (/([\w\d]+\?$)|([\W]+\?$)|(\? +$)/.test(message)) return ANSWERS['sure'];
-  if (
-    /(^[A-Z ]+!$)|(^[A-Z]+$)|(^[\d,A-Z ]+!$)|(^[A-Z\d\W]+!$)|(^([A-Z]+[ ]*)+$)/.test(
-      message
-    )
-  )
-    return ANSWERS['whoa'];
-  if (/(^\s+$)|(^$)/.test(message)) return ANSWERS['fine'];
-  return ANSWERS['whatever'];
+  for (let k in ANSWERS)
+    if (ANSWERS[k].regex.some(reg => reg.test(message)))
+      return ANSWERS[k].response;
+  return ANSWERS.whatever.response;
 };
 
 const ANSWERS = {
-  whatever: 'Whatever.',
-  whoa: 'Whoa, chill out!',
-  sure: 'Sure.',
-  calm: "Calm down, I know what I'm doing!",
-  fine: 'Fine. Be that way!'
+  whatever: { regex: [], response: 'Whatever.' },
+  whoa: {
+    regex: [
+      /(^[A-Z ]+!$)/,
+      /(^[A-Z]+$)/,
+      /(^[\d,A-Z ]+!$)/,
+      /(^[A-Z\d\W]+!$)/,
+      /(^([A-Z]+[ ]*)+$)/
+    ],
+    response: 'Whoa, chill out!'
+  },
+  calm: {
+    regex: [/^[A-Z ]+\?$/],
+    response: "Calm down, I know what I'm doing!"
+  },
+  sure: { regex: [/([\w\d]+\?$)/, /([\W]+\?$)/, /(\? +$)/], response: 'Sure.' },
+  fine: { regex: [/(^\s+$)/, /(^$)/], response: 'Fine. Be that way!' }
 };
