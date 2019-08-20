@@ -13,13 +13,14 @@ export const annotate = rawField => {
   const annotatedField = [];
   const fieldHeight = rawField.length;
   const fieldWidth = fieldHeight ? rawField[0].length : 0;
+  const MINE = '*';
 
   for (let i = 0; i < fieldHeight; i++) {
     const tempRow = [];
     for (let j = 0; j < fieldWidth; j++) {
       // If it's a mine cell fill it with '*' and skip
-      if (rawField[i][j] === '*') {
-        tempRow.push('*');
+      if (rawField[i][j] === MINE) {
+        tempRow.push(MINE);
         continue;
       }
       let numOfMines = 0;
