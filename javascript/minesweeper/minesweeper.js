@@ -14,6 +14,13 @@ export const annotate = rawField => {
   const fieldHeight = rawField.length;
   const fieldWidth = fieldHeight ? rawField[0].length : 0;
   const MINE = '*';
+  // from top-left corner moves around a cell clockwise
+  // where adjCells[0][0] is the horizontal offset and
+  // adjCells[0][1] is the vertical offset
+  //prettier-ignore
+  const adjCells = [[-1,-1],  [0, -1],  [1,-1],
+                    [-1, 0],  /*^|^*/   [1, 0],
+                    [-1, 1],  [0, 1],   [1, 1]]
 
   for (let i = 0; i < fieldHeight; i++) {
     const tempRow = [];
@@ -23,24 +30,21 @@ export const annotate = rawField => {
         tempRow.push(MINE);
         continue;
       }
-      let numOfMines = 0;
-      // Starting at upper left corner we check the surrounding box
-      // Waling clockwise, looking for mines
-      // prettier-ignore
-      {
-            if (i > 0 && j > 0 && rawField[i-1][j-1] === "*") numOfMines++ // Upper left corner
-            if (i > 0 && rawField[i-1][j] === "*") numOfMines++
-            if (i > 0 && j < fieldWidth-1 && rawField[i-1][j+1] === "*") numOfMines++ // Upper right corner
-            if (j < fieldWidth-1 && rawField[i][j+1] === "*") numOfMines++
-            if (i < fieldHeight-1 && j < fieldWidth-1 && rawField[i+1][j+1] === "*") numOfMines++ // Lower right corner
-            if (i < fieldHeight-1 && rawField[i+1][j] === "*") numOfMines++
-            if (i < fieldHeight-1 && j > 0 && rawField[i+1][j-1] === "*") numOfMines++ // Lower left corner
-            if (j > 0 && rawField[i][j-1] === "*") numOfMines++
-        }
+      // Using the adjCells we check all the adjacent cells
+      // and increase the numOfMines accordingly
+      let numOfMines = adjCells.reduce(
+        (acc, el) =>
+          rawField[i + el[1]] && rawField[i + el[1]][j + el[0]] === MINE
+            ? ++acc
+            : acc,
+        0
+      );
+
+      // if number of adjacent mines equals zero
+      // we need to enter an empty space for that particular cell
       tempRow.push(!numOfMines ? ' ' : numOfMines + '');
     }
     annotatedField.push(tempRow.join(''));
   }
-  console.log(annotatedField);
   return annotatedField;
 };
