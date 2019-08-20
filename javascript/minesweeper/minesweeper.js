@@ -13,26 +13,30 @@ const MINE = '*';
 export const annotate = rawField => {
   const annotatedField = [];
   const fieldHeight = rawField.length;
-  const fieldWidth = fieldHeight ? rawField[0].length : 0;
 
   for (let i = 0; i < fieldHeight; i++) {
-    const tempRow = [];
-    for (let j = 0; j < fieldWidth; j++) {
-      // If it's a mine cell fill it with '*' and skip
-      if (rawField[i][j] === MINE) {
-        tempRow.push(MINE);
-        continue;
-      }
-      let numOfMines = findAdjacentMines(rawField, i, j);
-      // if number of adjacent mines equals zero
-      // we need to enter an empty space for that particular cell
-      tempRow.push(!numOfMines ? ' ' : numOfMines + '');
-    }
+    const tempRow = visitCellsInRow(rawField, i);
     annotatedField.push(tempRow.join(''));
   }
   return annotatedField;
 };
 
+const visitCellsInRow = (rawField, i) => {
+  const fieldWidth = rawField[i].length;
+  const tempRow = [];
+  for (let j = 0; j < fieldWidth; j++) {
+    // If it's a mine cell fill it with '*' and skip
+    if (rawField[i][j] === MINE) {
+      tempRow.push(MINE);
+      continue;
+    }
+    let numOfMines = findAdjacentMines(rawField, i, j);
+    // if number of adjacent mines equals zero
+    // we need to enter an empty space for that particular cell
+    tempRow.push(numOfMines === 0 ? ' ' : numOfMines + '');
+  }
+  return tempRow;
+};
 // from top-left corner moves around a cell clockwise
 // where adjCells[0][0] is the horizontal offset and
 // adjCells[0][1] is the vertical offset
@@ -42,9 +46,11 @@ const adjCells = [[-1,-1],  [0, -1],  [1,-1],
                   [-1, 1],  [0, 1],   [1, 1]]
 // Using the adjCells we check all the adjacent cells
 // and increase the numOfMines accordingly
-const findAdjacentMines = (field, i, j) =>
+const findAdjacentMines = (field, y, x) =>
   adjCells.reduce(
-    (acc, [x, y]) =>
-      field[i + y] && field[i + y][j + x] === MINE ? ++acc : acc,
+    (acc, [xOffset, yOffset]) =>
+      field[y + yOffset] && field[y + yOffset][x + xOffset] === MINE
+        ? ++acc
+        : acc,
     0
   );
