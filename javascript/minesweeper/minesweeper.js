@@ -11,32 +11,36 @@
 //          that it would make our code much more complext we have decided not to do so.
 const MINE = '*';
 export const annotate = rawField => {
-  const annotatedField = [];
-  const fieldHeight = rawField.length;
+  // const annotatedField = [];
+  // const fieldHeight = rawField.length;
+  // const fieldWidth = fieldHeight ? rawField[0].length : 0;
 
-  for (let i = 0; i < fieldHeight; i++) {
-    const tempRow = visitCellsInRow(rawField, i);
-    annotatedField.push(tempRow.join(''));
-  }
+  const annotatedField = rawField.map((row, i) =>
+    row
+      .split('')
+      .map((_, j) => visitCell(rawField, i, j))
+      .join('')
+  );
+  // for (let i = 0; i < fieldHeight; i++) {
+  //   const tempRow = [];
+  //   for (let j = 0; j < fieldWidth; j++) {
+  //     tempRow.push(visitCell(rawField, i, j));
+  //   }
+  //   annotatedField.push(tempRow.join(''));
+  // }
   return annotatedField;
 };
 
-const visitCellsInRow = (rawField, i) => {
-  const fieldWidth = rawField[i].length;
-  const tempRow = [];
-  for (let j = 0; j < fieldWidth; j++) {
-    // If it's a mine cell fill it with '*' and skip
-    if (rawField[i][j] === MINE) {
-      tempRow.push(MINE);
-      continue;
-    }
-    let numOfMines = findAdjacentMines(rawField, i, j);
-    // if number of adjacent mines equals zero
-    // we need to enter an empty space for that particular cell
-    tempRow.push(numOfMines === 0 ? ' ' : numOfMines + '');
-  }
-  return tempRow;
+const visitCell = (rawField, i, j) => {
+  // If it's a mine cell fill it with '*' and skip
+  if (rawField[i][j] === MINE) return MINE;
+
+  let numOfMines = findAdjacentMines(rawField, i, j);
+  // if number of adjacent mines equals zero
+  // we need to enter an empty space for that particular cell
+  return numOfMines === 0 ? ' ' : numOfMines + '';
 };
+
 // from top-left corner moves around a cell clockwise
 // where adjCells[0][0] is the horizontal offset and
 // adjCells[0][1] is the vertical offset
