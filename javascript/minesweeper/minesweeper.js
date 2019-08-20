@@ -9,18 +9,11 @@
 //          We could potentially create new strings for the rows and change them at the end of annotating each row
 //          which would decrease our space complexity by a factor of the number of the rows but considering
 //          that it would make our code much more complext we have decided not to do so.
+const MINE = '*';
 export const annotate = rawField => {
   const annotatedField = [];
   const fieldHeight = rawField.length;
   const fieldWidth = fieldHeight ? rawField[0].length : 0;
-  const MINE = '*';
-  // from top-left corner moves around a cell clockwise
-  // where adjCells[0][0] is the horizontal offset and
-  // adjCells[0][1] is the vertical offset
-  //prettier-ignore
-  const adjCells = [[-1,-1],  [0, -1],  [1,-1],
-                    [-1, 0],  /*^|^*/   [1, 0],
-                    [-1, 1],  [0, 1],   [1, 1]]
 
   for (let i = 0; i < fieldHeight; i++) {
     const tempRow = [];
@@ -30,16 +23,7 @@ export const annotate = rawField => {
         tempRow.push(MINE);
         continue;
       }
-      // Using the adjCells we check all the adjacent cells
-      // and increase the numOfMines accordingly
-      let numOfMines = adjCells.reduce(
-        (acc, el) =>
-          rawField[i + el[1]] && rawField[i + el[1]][j + el[0]] === MINE
-            ? ++acc
-            : acc,
-        0
-      );
-
+      let numOfMines = findAdjacentMines(rawField, i, j);
       // if number of adjacent mines equals zero
       // we need to enter an empty space for that particular cell
       tempRow.push(!numOfMines ? ' ' : numOfMines + '');
@@ -48,3 +32,19 @@ export const annotate = rawField => {
   }
   return annotatedField;
 };
+
+// from top-left corner moves around a cell clockwise
+// where adjCells[0][0] is the horizontal offset and
+// adjCells[0][1] is the vertical offset
+//prettier-ignore
+const adjCells = [[-1,-1],  [0, -1],  [1,-1],
+                  [-1, 0],  /*^|^*/   [1, 0],
+                  [-1, 1],  [0, 1],   [1, 1]]
+// Using the adjCells we check all the adjacent cells
+// and increase the numOfMines accordingly
+const findAdjacentMines = (field, i, j) =>
+  adjCells.reduce(
+    (acc, [x, y]) =>
+      field[i + y] && field[i + y][j + x] === MINE ? ++acc : acc,
+    0
+  );
