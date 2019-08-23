@@ -11,20 +11,37 @@
 //          that it would make our code much more complext we have decided not to do so.
 export const annotate = field => {
   if (field.length === 0) return [];
+
+  const MINE = '*';
+  const BLANK = ' ';
   const width = field[0].length;
   const heigth = field.length;
-  const mineField = new MineField(heigth, width);
+  const grid = new Grid(heigth, width);
   for (let y = 0; y < heigth; y++) {
     for (let x = 0; x < width; x++) {
-      mineField.setCell(field, y, x);
+      // It's a mine; Leave it;
+      if (isMine(field[y][x])) {
+        grid.setCell(MINE, y, x);
+        continue;
+      }
+
+      let numOfMines = grid.findAdjacentCells(y, x, field).filter(isMine)
+        .length;
+      // if numOfMines is zero, insert blank
+      numOfMines = numOfMines ? numOfMines.toString() : BLANK;
+      grid.setCell(numOfMines, y, x);
     }
   }
-  return mineField.grid.map(row => row.join(''));
+  return grid.content.map(row => row.join(''));
+
+  function isMine(el) {
+    return el === MINE;
+  }
 };
 
-class MineField {
+class Grid {
   constructor(heigth, width) {
-    this.grid = this.initGrid(heigth, width);
+    this.content = this.initGrid(heigth, width);
     // from top-left corner moves around a cell clockwise
     // where adjCells[0][0] is the horizontal offset and
     // adjCells[0][1] is the vertical offset
@@ -32,31 +49,22 @@ class MineField {
     this.adjCells = [[-1,-1],  [0, -1],  [1,-1],
                      [-1, 0],  /*^|^*/   [1, 0],
                      [-1, 1],  [0, 1],   [1, 1]]
-    this.MINE = '*';
-    this.BLANK = ' ';
-  }
-
-  setCell(field, y, x) {
-    if (field[y][x] === this.MINE) {
-      this.grid[y][x] = this.MINE;
-      return;
-    }
-
-    const numOfMines = this.findAdjacenBombs(field, y, x);
-
-    // if numOfMines is zero, insert blank
-    this.grid[y][x] = numOfMines ? numOfMines.toString() : this.BLANK;
   }
 
   // Return all the surrounding cells' content
-  findAdjacenBombs(field, y, x) {
+  // If field is null, do this with your own grid;
+  findAdjacentCells(y, x, field = null) {
+    if (!field) field = this.content;
     return this.adjCells
       .map(([xOffset, yOffset]) =>
         field[y + yOffset] && field[y + yOffset][x + xOffset]
           ? field[y + yOffset][x + xOffset]
           : ''
       )
-      .filter(el => el === this.MINE).length;
+      .filter(el => el);
+  }
+  setCell(content, y, x) {
+    this.content[y][x] = content;
   }
 
   initGrid(height, width) {
