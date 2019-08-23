@@ -28,8 +28,7 @@ export const annotate = field => {
       let numOfMines = grid.findAdjacentCells(y, x, field).filter(isMine)
         .length;
       // if numOfMines is zero, insert blank
-      numOfMines = numOfMines ? numOfMines.toString() : BLANK;
-      grid.setCell(numOfMines, y, x);
+      grid.setCell(numOfMines ? numOfMines.toString() : BLANK, y, x);
     }
   }
   return grid.content.map(row => row.join(''));
