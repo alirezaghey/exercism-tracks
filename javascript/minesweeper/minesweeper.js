@@ -9,8 +9,6 @@
 //          We could potentially create new strings for the rows and change them at the end of annotating each row
 //          which would decrease our space complexity by a factor of the number of the rows but considering
 //          that it would make our code much more complext we have decided not to do so.
-const MINE = '*';
-const BLANK = ' ';
 export const annotate = field => {
   if (field.length === 0) return [];
 
@@ -18,7 +16,7 @@ export const annotate = field => {
   for (let y = 0; y < grid.heigth; y++) {
     for (let x = 0; x < grid.width; x++) {
       // It's a mine; Leave it;
-      if (isMine(grid.getRawCell(y, x))) {
+      if (isMine(grid.getCell(y, x))) {
         grid.setCell(MINE, y, x);
         continue;
       }
@@ -28,51 +26,57 @@ export const annotate = field => {
       grid.setCell(numOfMines ? numOfMines.toString() : BLANK, y, x);
     }
   }
-  return grid.content.map(row => row.join(''));
-  function isMine(el) {
-    return el === MINE;
-  }
+  return grid.matrix.map(row => row.join(''));
 };
 
 class Grid {
   constructor(rawData) {
-    this.rawData = rawData.slice();
     this.heigth = rawData.length;
     this.width = rawData[0].length;
-    this.content = this.initGrid(this.heigth, this.width);
+    this.matrix = this.initGrid(rawData);
     // from top-left corner moves around a cell clockwise
     // where adjCells[0][0] is the horizontal offset and
     // adjCells[0][1] is the vertical offset
     //prettier-ignore
     this.adjCells = [[-1,-1],  [0, -1],  [1,-1],
-                     [-1, 0],  /*^|^*/   [1, 0],
-                     [-1, 1],  [0, 1],   [1, 1]]
+    [-1, 0],  /*^|^*/   [1, 0],
+    [-1, 1],  [0, 1],   [1, 1]]
   }
 
   // Return all the surrounding cells' content
   // If field is null, do this with your own grid;
   findAdjacentCells(y, x) {
-    return this.adjCells
-      .map(([xOffset, yOffset]) =>
-        this.rawData[y + yOffset] && this.rawData[y + yOffset][x + xOffset]
-          ? this.rawData[y + yOffset][x + xOffset]
-          : ''
-      )
-      .filter(el => el);
+    return this.adjCells.map(([xOffset, yOffset]) =>
+      this.matrix[y + yOffset] && this.matrix[y + yOffset][x + xOffset]
+        ? this.matrix[y + yOffset][x + xOffset]
+        : ''
+    );
   }
+
   setCell(content, y, x) {
-    this.content[y][x] = content;
+    this.matrix[y][x] = content;
   }
 
-  getRawCell(y, x) {
-    return this.rawData[y][x];
+  getCell(y, x) {
+    return this.matrix[y][x];
   }
 
-  initGrid(height, width) {
+  initGrid(rawData) {
     const matrix = [];
-    for (let y = 0; y < height; y++) {
-      matrix.push(new Array(width));
+    for (let y = 0; y < this.heigth; y++) {
+      const tempRow = [];
+      for (let x = 0; x < this.width; x++) {
+        tempRow.push(rawData[y][x]);
+      }
+      matrix.push(tempRow);
     }
     return matrix;
   }
+}
+
+const MINE = '*';
+const BLANK = ' ';
+
+function isMine(el) {
+  return el === MINE;
 }
