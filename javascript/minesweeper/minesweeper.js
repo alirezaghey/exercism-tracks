@@ -17,7 +17,6 @@ export const annotate = field => {
     for (let x = 0; x < grid.width; x++) {
       // It's a mine; Leave it;
       if (isMine(grid.getCell(y, x))) {
-        grid.setCell(MINE, y, x);
         continue;
       }
 
