@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 @test "no name given" {
-  # [[ $BATS_RUN_SKIPPED == true  ]] || skip
+  #[[ $BATS_RUN_SKIPPED == true  ]] || skip
 
   # The above line controls whether to skip the test.
   # Normally, we skip every test except for the first one
@@ -11,7 +11,7 @@
   # `[[ $BATS_RUN_SKIPPED == true  ]] || skip`
   # line to run the test when you are ready.
   #
-  # You can also run the all the tests by setting the
+  # You can also run all the tests by setting the
   # `$BATS_RUN_SKIPPED` environment variable, like this:
   #
   #     $ BATS_RUN_SKIPPED=true bats two_fer_test.sh
