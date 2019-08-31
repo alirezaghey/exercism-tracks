@@ -27,14 +27,19 @@ export class Triangle {
    */
   _init(n) {
     const result = [[1]];
-    for (let i = 0; i < n - 1; i++) {
-      const tempRow = [1];
-      for (let j = 1; j < i + 1; j++) {
-        tempRow.push(result[i][j - 1] + result[i][j]);
-      }
-      tempRow.push(1);
-      result.push(tempRow);
-    }
+    for (let i = 0; i < n - 1; i++) result.push(this._createNextRow(result[i]));
     return result;
+  }
+
+  _createNextRow(row) {
+    // const result = [];
+    // for (let i = 1; i < row.length; i++) result.push(row[i - 1] + row[i]);
+    return [
+      1,
+      ...row
+        .map((el, i) => (i < row.length - 1 ? el + row[i + 1] : null))
+        .filter(el => el),
+      1
+    ];
   }
 }
