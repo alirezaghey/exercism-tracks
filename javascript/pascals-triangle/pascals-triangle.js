@@ -32,14 +32,28 @@ export class Triangle {
   }
 
   _createNextRow(row) {
-    // const result = [];
-    // for (let i = 1; i < row.length; i++) result.push(row[i - 1] + row[i]);
-    return [
-      1,
-      ...row
-        .map((el, i) => (i < row.length - 1 ? el + row[i + 1] : null))
-        .filter(el => el),
-      1
-    ];
+    return row.length > 1
+      ? [
+          1,
+          ...this._createPairsFromAdjacentCells(row).map(
+            ([left, right]) => left + right
+          ),
+          1
+        ]
+      : [1, 1];
+  }
+
+  /**
+   *
+   * @param {[Number]} row An array of integers
+   * @returns {[[Number, Number]]} An array of integer pairs
+   */
+  _createPairsFromAdjacentCells(row) {
+    if (row.length < 2)
+      throw 'To create pairs the input array must have at list two elements';
+
+    const pairs = [];
+    for (let i = 1; i < row.length; i++) pairs.push([row[i - 1], row[i]]);
+    return pairs;
   }
 }
