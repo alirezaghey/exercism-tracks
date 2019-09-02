@@ -1,25 +1,18 @@
 #!/usr/bin/env bash
 
 main () {
-    declare -A sounds
-    sounds[3]="Pling"
-    sounds[5]="Plang"
-    sounds[7]="Plong"
+    declare -A sounds=( [3]=Pling [5]=Plang [7]=Plong)
 
-    if (( $1 % 3 == 0 )); then
-        name=${sounds[3]}
-    fi
-    if (( $1 % 5 == 0 )); then
-        name=$name${sounds[5]}
-    fi
-    if (( $1 % 7 == 0 )); then
-        name=$name${sounds[7]}
-    fi
+    for i in 3 5 7
+        do  if (( $1 % $i == 0 )); then
+                name+=${sounds[$i]}
+            fi
+    done
 
-    if [[ ${#name} > 0 ]]; then
-        echo $name
+    if [[ -n $name ]]; then
+        echo "$name"
     else
-        echo $1
+        echo "$1"
     fi
 }
 
