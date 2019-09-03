@@ -32,15 +32,9 @@ export class Triangle {
   }
 
   _createNextRow(row) {
-    return row.length > 1
-      ? [
-          1,
-          ...this._createPairsFromAdjacentCells(row).map(
-            ([left, right]) => left + right
-          ),
-          1
-        ]
-      : [1, 1];
+    return this._createPairsFromAdjacentCells(row).map(
+      ([left, right]) => left + right
+    );
   }
 
   /**
@@ -49,9 +43,7 @@ export class Triangle {
    * @returns {[[Number, Number]]} An array of integer pairs
    */
   _createPairsFromAdjacentCells(row) {
-    if (row.length < 2)
-      throw 'To create pairs the input array must have at list two elements';
-
+    row = [0, ...row, 0];
     const pairs = [];
     for (let i = 1; i < row.length; i++) pairs.push([row[i - 1], row[i]]);
     return pairs;
