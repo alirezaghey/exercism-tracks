@@ -2,10 +2,11 @@
 
 
 main () {
+    local words
     IFS="- _*" read -a words <<< "$1"
 
     for i in "${words[@]}"; do
-        result=$result${i:0:1}
+        result+=${i:0:1}
     done
 
     echo "${result^^}"
