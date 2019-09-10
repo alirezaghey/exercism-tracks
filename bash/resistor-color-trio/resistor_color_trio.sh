@@ -22,11 +22,10 @@ main () {
         echo $(( result / 10 ** 9 )) gigaohms
     elif (( $result > 10 ** 7 )); then
         echo $(( result / 10 ** 6 )) megaohms
-    elif (( $result > 10 ** 3 )); then
+    elif (( $result > 10 ** 3 )) && [[ ${result:(-3)} == '000' ]]; then
         echo $(( result / 10 ** 3)) kiloohms
     else echo "$result" ohms
     fi
-
 
 }
 
