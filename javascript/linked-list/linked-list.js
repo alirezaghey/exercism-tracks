@@ -11,7 +11,7 @@ export class LinkedList {
   }
   push(val) {
     const node = new Node(val);
-    if (this.head === null) this.head = this.tail = node;
+    if (this.isEmpty()) this.head = this.tail = node;
     else {
       node.prev = this.tail;
       this.tail.next = node;
@@ -21,7 +21,7 @@ export class LinkedList {
   }
 
   pop() {
-    if (!this.count()) return null;
+    if (this.isEmpty()) return null;
     const val = this.tail.val;
     this.tail = this.tail.prev;
     if (this.tail) this.tail.next = null;
@@ -31,7 +31,7 @@ export class LinkedList {
   }
 
   shift() {
-    if (!this.count()) return null;
+    if (this.isEmpty()) return null;
     const val = this.head.val;
     this.head = this.head.next;
     if (this.head) this.head.prev = null;
@@ -42,7 +42,7 @@ export class LinkedList {
 
   unshift(val) {
     const node = new Node(val);
-    if (this.head === null) this.head = this.tail = node;
+    if (this.isEmpty()) this.head = this.tail = node;
     else {
       node.next = this.head;
       if (this.head) this.head.prev = node;
@@ -55,30 +55,21 @@ export class LinkedList {
     let curr = this.head;
     while (curr) {
       if (curr.val === val) {
-        // It's not the head
-        if (curr.prev) {
-          // It's also not the tail
-          if (curr.next) {
-            curr.prev.next = curr.next;
-            curr.next.prev = curr.prev;
-          } else {
-            // It's not the head but it's the tail
-            curr.prev.next = null;
-            this.tail = curr.prev;
-          }
+        if (curr.prev && curr.next) {
+          // It's neither the head nor the tail
+          curr.prev.next = curr.next;
+          curr.next.prev = curr.prev;
+          this.counter--;
+          break;
+        } else if (curr.prev) {
+          // It's the tail
+          this.pop();
+          break;
         } else {
           // It's the head
-          if (curr.next) {
-            // But not the tail
-            curr.next.prev = null;
-            this.head = curr.next;
-          } else {
-            // It's also the tail
-            this.head = this.tail = null;
-          }
+          this.shift();
+          break;
         }
-        this.counter--;
-        break;
       }
       curr = curr.next;
     }
@@ -86,6 +77,10 @@ export class LinkedList {
 
   count() {
     return this.counter;
+  }
+
+  isEmpty() {
+    return this.count() === 0;
   }
 }
 
