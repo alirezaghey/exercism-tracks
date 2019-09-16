@@ -3,7 +3,7 @@
 pow=${#1}
 result=0
 
-for (( i=0; i<pow; i++ )); do
+for (( i=0; i<${#1}; i++ )); do
     (( result+=${1:$i:1}**$pow ))
 done
 
