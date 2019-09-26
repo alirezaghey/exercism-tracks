@@ -5,7 +5,8 @@ main () {
     # convert to lowercase
     input=${1,,}
     # remove none-alpha chars
-    input=$(echo "$input" | sed "s/[^a-z]//g")
+    input=${input//[!a-z]/}
+    # input=$(echo "$input" | sed "s/[^a-z]//g")
 
     # using a dictionary we remove dups
     local -A chars
@@ -14,12 +15,7 @@ main () {
     done
 
     # check if it's pangram
-    # TODO: change this to a one-line with && ||
-    if [[ ${#chars[@]} -eq 26 ]]; then
-        echo true
-    else
-        echo false
-    fi
+    [[ ${#chars[@]} -eq 26 ]] && echo true || echo false
 }
 
 main "$@"
