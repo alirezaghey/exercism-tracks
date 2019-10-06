@@ -12,7 +12,7 @@ main () {
     local chars=${1^^}
     local result=0
     for (( i=0; i<${#1}; i++ )); do
-        result=$(( result+${points[${chars:i:1}]} ))
+        (( result += ${points[${chars:i:1}]} ))
     done
     echo $result
 }
