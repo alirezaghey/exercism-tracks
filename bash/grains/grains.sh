@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 main () {
-    if [[ $1 != 'total' && ( $1 -lt 1 || $1 -gt 64 ) ]]; then
+    if [[ $1 != 'total' ]] && (( $1 < 1 || $1 > 64 )); then
         echo "Error: invalid input"
         exit 1
     fi
@@ -14,7 +14,7 @@ main () {
     else
         result=$(bc <<< "2 ^ ($1-1)")
     fi
-    echo $result
+    echo "$result"
 }
 
 main "$@"
